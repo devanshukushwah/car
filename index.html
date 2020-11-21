@@ -3,6 +3,7 @@
 <head>
     <title></title>
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;600&display=swap" rel="stylesheet">
+    <script src="jquery-3.5.0.min.js"></script>
 </head>
     <style>
         *{ margin:0; padding: 0; font-family: 'Josefin Sans', sans-serif; }
@@ -82,26 +83,51 @@
     		background-repeat: no-repeat;
     		background-size:100% 100%;
     	}
+    	#txtHint{
+    		/*border: 1px solid black;*/
+    		color:black;
+    		/*width:100px;*/
+    		/*height: 500px;*/
+    		position: absolute;
+    		top:2.3%;
+    		margin:0px 80%;
+    		z-index: 1;
+    	}
     </style>    
 
 <body>
 
 <div class="Cargame">
     <div class="Score"> </div>
-    <div class="Startscreen">
+    <div class="Startscreen" style="z-index: 1">
         <p> press here to start Game!<br>
             Arrow keys use for move! <br>
             If you hit another car Game will over!
         </p>    
     </div>
     <div class="Gamearea">  </div>
+    <!-- for table -->
+  <div class="ibox" style="position: absolute;top:100px;margin-left:2.6%;color:white;font-size:20px;font-weight: bold">
+    <label>If You Want To Rank Your Name:</label><br>
+     <input style="border-radius: 0px;width:200px;height: 23px; outline: none;text-align: center;margin: 5px 48px" type="text" placeholder="Type Your Name" id="myInput" oninput="getInputValue();">
+   </div>  
 </div>
+   <div id="txtHint" class="rresult" style="width:250px ;position: absolute;"><b></b></div>
+
 <script>
+	const ibox = document.querySelector('.ibox');
+    var myinput = document.querySelector('#myInput')
+    // ibox.classList.add("hide");
+	var name = "";
+	function getInputValue(){
+		name = myinput.value;
+		// console.log(name);
+	}
     const Score = document.querySelector('.Score');
     const Startscreen = document.querySelector('.Startscreen');
     const Gamearea = document.querySelector('.Gamearea');
     let ps =0;    
-    console.log(Gamearea);
+    // console.log(Gamearea);
 
     Startscreen.addEventListener('click',start);
     let player = { speed : 5, Score: 0 };
@@ -113,18 +139,18 @@
     document.addEventListener('keyup', keyup);
     
     function keydown(e){  
-        e.preventDefault();
+        // e.preventDefault();
         keys[e.key] = true;
-        console.log(e.key);
-        console.log(keys);
+        // console.log(e.key);
+        // console.log(keys);
         
     }  
     
     function keyup(e){
-        e.preventDefault(); 
+        // e.preventDefault(); 
         keys[e.key] = false;
-        console.log(e.key);
-        console.log(keys);
+        // console.log(e.key);
+        // console.log(keys);
         
     }
 
@@ -153,14 +179,17 @@
         player.start = false;
         Startscreen.classList.remove("hide");
         Startscreen.innerHTML =" GAME OVER <br>PRESS HERE TO RESTART YOUR GAME.";
+    if ( name!= ""){
+     jinsert();
+     setTimeout(showUser,2000);
     	}
-
+}
 
     function moveenemy(car){
         let enemy = document.querySelectorAll('.enemy');
         enemy.forEach(function(item) {
             if(iscollide(car, item)){
-                console.log("Boom HIT");
+                // console.log("Boom HIT");
                 endgame();
 
             }
@@ -176,10 +205,10 @@
     } 
 
     function gamePlay(){
-        console.log("Hey I am clicked.");
+        // console.log("Hey I am clicked.");
         let car = document.querySelector('.car');
         let road = Gamearea.getBoundingClientRect();
-        console.log(road);
+        // console.log(road);
 
         if(player.start){ 
 
@@ -195,7 +224,7 @@
             car.style.top = player.y + "px";
 
             window.requestAnimationFrame(gamePlay);
-            console.log(player.Score++);
+            // console.log(player.Score++);
 
             player.Score++;
             ps = player.Score;
@@ -211,7 +240,7 @@
     	return "#"+c()+c()+c();
     }
     function start(){
-        // Gamearea.classList.remove("hide");
+        ibox.classList.remove("hide");
         Startscreen.classList.add("hide");
         Gamearea.innerHTML = "";
 
@@ -234,8 +263,8 @@
         player.x = car.offsetLeft;
         player.y = car.offsetTop;
 
-        console.log("top position " + car.offsetTop);
-        console.log("left position" + car.  offsetLeft);
+        // console.log("top position " + car.offsetTop);
+        // console.log("left position" + car.  offsetLeft);
 
         for(x=0; x<5; x++){
 
@@ -248,10 +277,54 @@
             enemycar.style.top = enemycar.y + "px";
 
         }
-
+showUser();
     } 
+var txthint = document.querySelector("#txtHint");
+
         
-    
+    function showUser(str) {
+    $.ajax({
+        crossOrigin: true,
+        url: 'https://typingchamps.000webhostapp.com/database.php',
+        // url: 'http://typingchamps.byethost17.com/datashow.php',
+        // url: 'http://localhost:8000/datashow.php',
+        success: function(data) {
+            document.getElementById("txtHint").innerHTML=data;
+        }
+    });}
+
+
+function jinsert(){
+var data1=name;
+
+var data2= ps;
+// var data3 = accuracyVal;
+console.log("working jinsert");
+console.log(data1);
+console.log(data2);
+
+var dataTosend='name='+data1+'&score='+data2;
+
+$.ajax({
+
+url: 'https://typingchamps.000webhostapp.com/incert.php',
+
+type: 'POST',
+
+data:dataTosend,
+
+async: true,
+
+success: function (data) {
+
+
+
+},
+
+});
+}
+
+
 </script>
          
     
